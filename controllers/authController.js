@@ -26,3 +26,31 @@ exports.registerUser = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+// POST /api/auth/login
+exports.loginUser = async (req , res) => {
+  try {
+    const {email , password} = req.body ;
+    if (!email || !password){
+      return res.status(400).json("Email and password are required");
+    }
+
+    const user = await User.findOne({email});
+    if (!user) {
+      return res.status(401).json("Invalid email or password");
+    }
+
+    if (user.password !==password){
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    res.status(201).json({message : 'Login Successfully' , user})
+
+
+  }
+
+  catch(err) {
+    console.error('login error' , err);
+    res.status(500).json({message : 'Server Error'});
+  }
+}
